@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +32,8 @@ public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mItems = new ArrayList<>();
     private GridLayoutManager mGridManager;
+    private ProgressBar progressBar;
+    private CoordinatorLayout mCoordinatorLayout;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -54,30 +58,32 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        updateItems();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+        mCoordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayout);
         mPhotoRecyclerView = (RecyclerView) v.findViewById(R.id.photo_recycler_view);
         mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        int desiredColumnNumber = mPhotoRecyclerView.getMeasuredWidth() / 240;
+                        int desiredColumnNumber = mCoordinatorLayout.getMeasuredWidth() / 240;
 
-                        if ((mPhotoRecyclerView.getMeasuredWidth() % 240) > 0.5) {
+                        if ((mCoordinatorLayout.getMeasuredWidth() % 240) > 0.5) {
                             desiredColumnNumber ++;
                         }
 
-                        mGridManager= new GridLayoutManager(getActivity(),desiredColumnNumber);
+                        mGridManager= new GridLayoutManager(getActivity(), desiredColumnNumber);
                         mPhotoRecyclerView.setLayoutManager(mGridManager);
                         mPhotoRecyclerView.getViewTreeObserver()
                                 .removeOnGlobalLayoutListener(this);
                     }
                 });
+        updateItems();
         setupAdapter();
         return v;
     }
@@ -95,6 +101,7 @@ public class PhotoGalleryFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "QueryTextSubmit: " + query);
                 QueryPreferences.setStoredQuery(getActivity(), query);
+                searchView.onActionViewCollapsed();
                 updateItems();
                 return true;
             }
@@ -158,7 +165,6 @@ public class PhotoGalleryFragment extends Fragment {
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
 
-
         private List<GalleryItem> mGalleryItems;
 
         public PhotoAdapter(List<GalleryItem> galleryItems) {
@@ -193,7 +199,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-
             if (mQuery == null) {
                 return  new FlickrFetchr().fetchRecentPhotos();
             } else {
@@ -202,9 +207,26 @@ public class PhotoGalleryFragment extends Fragment {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressBar();
+        }
+
+        @Override
         protected void onPostExecute(List<GalleryItem> items) {
+            hideProgressBar();
             mItems = items;
             setupAdapter();
         }
+    }
+
+    public void showProgressBar() {
+        mPhotoRecyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        mPhotoRecyclerView.setVisibility(View.VISIBLE);
     }
 }

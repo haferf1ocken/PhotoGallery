@@ -73,7 +73,6 @@ public class FlickrFetchr {
         List<GalleryItem> items = new ArrayList<>();
 
         try {
-
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             Gson gson = new Gson();
