@@ -76,7 +76,7 @@ public class FlickrFetchr {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             Gson gson = new Gson();
-            GalleryPage pge = gson.fromJson(jsonString,GalleryPage.class);
+            GalleryPage pge = gson.fromJson(jsonString, GalleryPage.class);
             items = pge.getGalleryItemList();
         } catch (IOException ioe) {
             Log.e(TAG, "Failed to fetch items", ioe);

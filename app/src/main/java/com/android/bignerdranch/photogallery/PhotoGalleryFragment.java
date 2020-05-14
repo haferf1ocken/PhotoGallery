@@ -1,6 +1,5 @@
 package com.android.bignerdranch.photogallery;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -17,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,7 +25,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
 
     public static final String TAG = "PhotoGalleryFragment";
     private RecyclerView mPhotoRecyclerView;
