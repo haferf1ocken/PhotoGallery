@@ -1,5 +1,6 @@
 package com.android.bignerdranch.photogallery;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -89,11 +90,12 @@ public class PhotoGalleryFragment extends VisibleFragment {
                                 .removeOnGlobalLayoutListener(this);
                     }
                 });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateItems();
                 mSwipeRefreshLayout.setRefreshing(false);
+                updateItems();
             }
         });
         updateItems();

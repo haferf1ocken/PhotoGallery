@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/swipeRefreshLayout">
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_recycler_view"
             android:layout_width="match_parent"
@@ -23,7 +25,7 @@
             android:layout_gravity="center"
             android:visibility="gone"
             tools:visibility="visible" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
