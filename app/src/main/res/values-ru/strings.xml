@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Photo Gallery</string>
+    <string name="search">Поиск</string>
+    <string name="clear_search">Очистить поиск</string>
+    <string name="start_polling">Включить уведомления о новых фото</string>
+    <string name="stop_polling">Отключить уведомления о новых фото</string>
+    <string name="new_pictures_title">Новые фотографии Photo Gallery</string>
+    <string name="new_pictures_text">У вас есть новые фотографии в Photo Gallery.</string>
+</resources>
