@@ -2,7 +2,9 @@ package com.android.bignerdranch.photogallery;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +18,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.squareup.picasso.Picasso;
@@ -33,7 +38,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     private List<GalleryItem> mItems = new ArrayList<>();
     private GridLayoutManager mGridManager;
     private ProgressBar progressBar;
-    private CoordinatorLayout mCoordinatorLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -60,20 +65,21 @@ public class PhotoGalleryFragment extends VisibleFragment {
         setHasOptionsMenu(true);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
-        mCoordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         mPhotoRecyclerView = (RecyclerView) v.findViewById(R.id.photo_recycler_view);
         mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        int desiredColumnNumber = mCoordinatorLayout.getMeasuredWidth() / 240;
+                        int desiredColumnNumber = mSwipeRefreshLayout.getMeasuredWidth() / 240;
 
-                        if ((mCoordinatorLayout.getMeasuredWidth() % 240) > 0.5) {
+                        if ((mSwipeRefreshLayout.getMeasuredWidth() % 240) > 0.5) {
                             desiredColumnNumber ++;
                         }
 
@@ -83,10 +89,18 @@ public class PhotoGalleryFragment extends VisibleFragment {
                                 .removeOnGlobalLayoutListener(this);
                     }
                 });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateItems();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         updateItems();
         setupAdapter();
         return v;
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
